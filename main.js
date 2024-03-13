@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		  return response.json(); // 解析JSON响应  
 		})  
 		.then(data => {  
-			dataDiv.innerHTML = `<table><thead><tr><th>图标</th><th>模组</th><th>MOTD</th></tr></thead><tr><td><img width="60" src="${data.logo}"></td><td>${data.mod}</td><td>${data.motd}</td></li></tr></table>`; 
+			dataDiv.innerHTML = `<table><thead><tr><th>图标</th><th>在线人数</th><th>模组</th><th>MOTD</th></tr></thead><tr><td><img width="60" src="${data.logo}"></td><td>${data.p}/${data.mp}</td><td>${data.mod}</td><td>${data.motd}</td></li></tr></table>`; 
 		});  
 	});    
 });
