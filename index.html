@@ -431,16 +431,15 @@
         row.forEach((cell, i) => {
           if (i === 0 && cell) { // 假设第0列是图片
             html += `<td><img width="60" src="${cell}" onerror="this.style.display='none'"></td>`;
-          } else if (i === 1 && cell) { // 假设第1列是IP地址
-            const ipMatch = cell.match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
-            if (ipMatch && ipMatch[1]) {
-              const ip = ipMatch[1];
-              html += `<td>${cell.replace(ip, `<span class="ip-address" onclick="copyToClipboard('${ip}')" title="点击复制IP地址">${ip}</span>`)}</td>`;
-            } else {
-              html += `<td>${cell || 'N/A'}</td>`;
-            }
           } else {
-            html += `<td>${cell || 'N/A'}</td>`;
+            // 新增：自动检测IP地址并包裹在可点击的span中
+            let processedCell = cell;
+            if (typeof cell === 'string') {
+              // 匹配IP地址格式 (xxx.xxx.xxx.xxx)
+              const ipRegex = /(\b(?:\d{1,3}\.){3}\d{1,3}\b)/g;
+              processedCell = cell.replace(ipRegex, '<span class="ip-address" onclick="copyToClipboard(\'$1\')" title="点击复制IP地址">$1</span>');
+            }
+            html += `<td>${processedCell || 'N/A'}</td>`;
           }
         });
         html += `</tr>`;
