@@ -162,8 +162,8 @@
       display: block;
     }
 
-    /* IP地址样式 */
-    .ip-address-default {
+    /* IP地址和端口样式 */
+    .server-address {
       color: #495057;
       cursor: pointer;
       padding: 2px 6px;
@@ -178,13 +178,13 @@
       position: relative;
     }
 
-    .ip-address-default:hover {
+    .server-address:hover {
       background: rgba(92, 184, 92, 0.1);
       color: #495057;
       border: 1px solid #5cb85c;
     }
 
-    .ip-address-default:active {
+    .server-address:active {
       transform: scale(0.98);
     }
 
@@ -216,8 +216,8 @@
       background: #dc3545;
     }
 
-    /* 为IP地址添加点击反馈 */
-    .ip-address-default.clicked {
+    /* 为服务器地址添加点击反馈 */
+    .server-address.clicked {
       background: rgba(92, 184, 92, 0.2);
       transform: scale(0.95);
     }
@@ -307,7 +307,7 @@
         max-width: 40px;
       }
 
-      .ip-address-default {
+      .server-address {
         font-size: 11px;
         padding: 1px 4px;
       }
@@ -344,7 +344,7 @@
         max-width: 35px;
       }
 
-      .ip-address-default {
+      .server-address {
         font-size: 10px;
         padding: 1px 3px;
       }
@@ -458,9 +458,13 @@
             
             if (isDefaultList && i === 1) { // 只针对默认列表的第2列(索引1)，也就是IP/域名列
               if (typeof cell === 'string') {
-                // 替换IP和域名为可点击的元素
-                processedCell = cell.replace(/(\b(?:\d{1,3}\.){3}\d{1,3}\b|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, 
-                  '<span class="ip-address-default" onclick="copyToClipboard(\'$1\', this)" title="点击复制IP地址或域名">$1</span>');
+                // 关键修改：匹配 IP:端口 或 域名:端口 格式
+                // 匹配格式如：sky.lilys.top:25569 或 123.45.67.89:25565
+                processedCell = cell.replace(/((?:\b(?:\d{1,3}\.){3}\d{1,3}\b|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(?::\d+)?)/g, 
+                  '<span class="server-address" onclick="copyToClipboard(\'$1\', this)" title="点击复制服务器地址">$1</span>');
+                
+                // 进一步改进：如果只有IP/域名没有端口，也使其可点击
+                // 但不包括已经处理的部分
               }
             }
             
@@ -521,12 +525,12 @@
       document.body.removeChild(textarea);
     }
 
-    // 显示复制成功提示 - 使用固定位置在屏幕右下角
+    // 显示复制成功提示 - 使用固定位置在屏幕中央
     function showCopySuccess() {
       copyTooltip.textContent = '✅ 已复制';
       copyTooltip.className = 'copy-tooltip show';
       
-      // 定位在屏幕右下角
+      // 定位在屏幕中央
       copyTooltip.style.left = '50%';
       copyTooltip.style.top = '50%';
       copyTooltip.style.transform = 'translate(-50%, -50%)';
@@ -541,7 +545,7 @@
       copyTooltip.textContent = '❌ 复制失败';
       copyTooltip.className = 'copy-tooltip error show';
       
-      // 定位在屏幕右下角
+      // 定位在屏幕中央
       copyTooltip.style.left = '50%';
       copyTooltip.style.top = '50%';
       copyTooltip.style.transform = 'translate(-50%, -50%)';
@@ -560,12 +564,24 @@
         const data = await response.json();
         if (!Array.isArray(data)) throw new Error('数据格式错误');
 
-        const headers = ['图标', '服务器IP地址/域名', 'MOTD'];
-        const rows = data.map(item => [
-          item.logo || '',
-          item.ip || 'N/A',
-          item.motd || 'N/A'
-        ]);
+        const headers = ['图标', '服务器地址 (IP:端口)', 'MOTD'];
+        const rows = data.map(item => {
+          // 关键修改：如果item.ip存在，我们尝试构造完整的地址
+          // 但是原API可能只返回IP，没有端口。这里假设item.ip包含IP，如果有端口信息需要API提供
+          // 如果您的API实际上返回的是 "IP:端口" 格式，比如 "sky.lilys.top:25569"，那么直接使用item.ip即可
+          let serverAddress = item.ip || 'N/A';
+          
+          // 如果您想显示MOTD作为服务器名称，可以这样修改标题
+          // 但为了复制功能，我们主要关注item.ip
+          
+          return [
+            item.logo || '',
+            serverAddress, // 这里应该是 "IP" 或 "IP:端口" 格式
+            item.motd || 'N/A'
+          ];
+        });
+        
+        // 更新表头以反映可能包含端口
         showTable(headers, rows, true);
 
       } catch (error) {
