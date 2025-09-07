@@ -162,7 +162,7 @@
       display: block;
     }
 
-    /* IP地址样式 - 只在默认列表中生效 */
+    /* IP地址样式 */
     .ip-address-default {
       color: #495057;
       cursor: pointer;
@@ -175,6 +175,7 @@
       display: inline-block;
       margin: 0 2px;
       border: 1px solid transparent;
+      position: relative;
     }
 
     .ip-address-default:hover {
@@ -184,28 +185,41 @@
     }
 
     .ip-address-default:active {
-      transform: translateY(0);
+      transform: scale(0.98);
     }
 
-    /* 复制成功提示 */
+    /* 复制成功提示 - 使用固定位置 */
     .copy-tooltip {
       position: fixed;
       background: #28a745;
       color: white;
-      padding: 6px 10px;
+      padding: 8px 12px;
       border-radius: 4px;
       font-size: 12px;
-      z-index: 1000;
+      z-index: 10000;
       pointer-events: none;
       opacity: 0;
       transform: translateY(-10px);
       transition: all 0.3s ease;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      white-space: nowrap;
+      max-width: 200px;
+      text-align: center;
     }
 
     .copy-tooltip.show {
       opacity: 1;
       transform: translateY(0);
+    }
+
+    .copy-tooltip.error {
+      background: #dc3545;
+    }
+
+    /* 为IP地址添加点击反馈 */
+    .ip-address-default.clicked {
+      background: rgba(92, 184, 92, 0.2);
+      transform: scale(0.95);
     }
 
     /* 返回顶部按钮 */
@@ -293,13 +307,16 @@
         max-width: 40px;
       }
 
-      /* 移动端IP样式调整 */
       .ip-address-default {
         font-size: 11px;
         padding: 1px 4px;
       }
 
-      /* 移动端返回顶部按钮调整 */
+      .copy-tooltip {
+        font-size: 11px;
+        padding: 6px 10px;
+      }
+
       .back-to-top {
         width: 45px;
         height: 45px;
@@ -327,13 +344,16 @@
         max-width: 35px;
       }
 
-      /* 小屏幕IP样式 */
       .ip-address-default {
         font-size: 10px;
         padding: 1px 3px;
       }
 
-      /* 小屏幕返回顶部按钮调整 */
+      .copy-tooltip {
+        font-size: 10px;
+        padding: 5px 8px;
+      }
+
       .back-to-top {
         width: 40px;
         height: 40px;
@@ -343,7 +363,7 @@
       }
     }
 
-    /* 页底下载链接样式 - 新增 */
+    /* 页底下载链接样式 */
     .footer-download {
       margin-top: 40px;
       padding: 20px;
@@ -397,13 +417,13 @@
     </main>
   </div>
 
-  <!-- 复制提示工具 -->
-  <div id="copyTooltip" class="copy-tooltip">✅ IP已复制到剪贴板</div>
+  <!-- 复制提示工具 - 使用固定位置 -->
+  <div id="copyTooltip" class="copy-tooltip">✅ 已复制</div>
 
   <!-- 返回顶部按钮 -->
   <button id="backToTop" class="back-to-top" title="返回顶部">↑</button>
 
-  <!-- 页底下载链接 - 新增 -->
+  <!-- 页底下载链接 -->
   <div class="footer-download">
     <a href="https://list.mczfw.cn/download?download=静态我的世界服务器查询网站源码">点击下载我的世界查询网站源码</a>
   </div>
@@ -437,11 +457,10 @@
             let processedCell = cell;
             
             if (isDefaultList && i === 1) { // 只针对默认列表的第2列(索引1)，也就是IP/域名列
-              // 检查单元格内容是否包含IP或域名
               if (typeof cell === 'string') {
-                // 创建一个临时div来解析HTML内容
+                // 替换IP和域名为可点击的元素
                 processedCell = cell.replace(/(\b(?:\d{1,3}\.){3}\d{1,3}\b|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, 
-                  '<span class="ip-address-default" onclick="copyToClipboard(\'$1\')" title="点击复制IP地址或域名">$1</span>');
+                  '<span class="ip-address-default" onclick="copyToClipboard(\'$1\', this)" title="点击复制IP地址或域名">$1</span>');
               }
             }
             
@@ -455,19 +474,23 @@
       dataDiv.innerHTML = html;
     }
 
-    // === 复制到剪贴板功能 ===
-    function copyToClipboard(text) {
+    // === 复制到剪贴板功能 - 简化并改进反馈 ===
+    function copyToClipboard(text, element) {
+      // 添加点击反馈
+      element.classList.add('clicked');
+      setTimeout(() => element.classList.remove('clicked'), 150);
+      
       // 方法1: 使用现代 Clipboard API
       if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(text).then(function() {
-          showCopyTooltip();
+          showCopySuccess();
         }).catch(function(err) {
           console.error('Clipboard API 失败:', err);
-          // 如果 Clipboard API 失败，回退到方法2
+          // 回退到传统方法
           fallbackCopyTextToClipboard(text);
         });
       } else {
-        // 方法2: 回退方案
+        // 方法2: 传统方法
         fallbackCopyTextToClipboard(text);
       }
     }
@@ -487,7 +510,7 @@
       try {
         const successful = document.execCommand('copy');
         if (successful) {
-          showCopyTooltip();
+          showCopySuccess();
         } else {
           showCopyError();
         }
@@ -498,25 +521,33 @@
       document.body.removeChild(textarea);
     }
 
-    // 显示复制成功提示
-    function showCopyTooltip() {
-      copyTooltip.classList.add('show');
+    // 显示复制成功提示 - 使用固定位置在屏幕右下角
+    function showCopySuccess() {
+      copyTooltip.textContent = '✅ 已复制';
+      copyTooltip.className = 'copy-tooltip show';
+      
+      // 定位在屏幕右下角
+      copyTooltip.style.left = '50%';
+      copyTooltip.style.top = '50%';
+      copyTooltip.style.transform = 'translate(-50%, -50%)';
       
       setTimeout(function() {
-        copyTooltip.classList.remove('show');
+        copyTooltip.className = 'copy-tooltip';
       }, 2000);
     }
 
     // 显示复制失败提示
     function showCopyError() {
-      copyTooltip.textContent = '❌ 复制失败，请手动复制';
-      copyTooltip.style.background = '#dc3545';
-      copyTooltip.classList.add('show');
+      copyTooltip.textContent = '❌ 复制失败';
+      copyTooltip.className = 'copy-tooltip error show';
+      
+      // 定位在屏幕右下角
+      copyTooltip.style.left = '50%';
+      copyTooltip.style.top = '50%';
+      copyTooltip.style.transform = 'translate(-50%, -50%)';
       
       setTimeout(function() {
-        copyTooltip.classList.remove('show');
-        copyTooltip.style.background = '#28a745';
-        copyTooltip.textContent = '✅ 点击复制IP地址';
+        copyTooltip.className = 'copy-tooltip';
       }, 2000);
     }
 
@@ -529,13 +560,13 @@
         const data = await response.json();
         if (!Array.isArray(data)) throw new Error('数据格式错误');
 
-        const headers = ['图标', '服务器IP地址', 'MOTD'];
+        const headers = ['图标', '服务器IP地址/域名', 'MOTD'];
         const rows = data.map(item => [
           item.logo || '',
           item.ip || 'N/A',
           item.motd || 'N/A'
         ]);
-        showTable(headers, rows, true); // true表示这是默认列表
+        showTable(headers, rows, true);
 
       } catch (error) {
         console.error('获取默认列表失败:', error);
@@ -570,7 +601,7 @@
           ]
         ];
 
-        showTable(headers, rows, false); // false表示这不是默认列表
+        showTable(headers, rows, false);
 
       } catch (error) {
         console.error('查询IP失败:', error);
