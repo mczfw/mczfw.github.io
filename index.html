@@ -20,9 +20,6 @@
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 
   <style>
-    html {
-      overflow-y: scroll;
-    }
     * {
       box-sizing: border-box;
     }
@@ -35,7 +32,17 @@
       background-color: #fafafa;
       line-height: 1.6;
     }
-
+    
+    html {
+      overflow-y: scroll;
+    }
+    
+    html, body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    
     a:link,
     a:visited {
       text-decoration: none;
@@ -383,5 +390,6 @@
 </body>
 
 </html>
+
 
 
