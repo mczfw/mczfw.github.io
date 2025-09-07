@@ -1,43 +1,385 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh">
-	<head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-		<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<title>我的世界服务器列表 - Minecraft Server list</title>
-		<meta name="description" content="我的世界服务器列表，查找自己喜欢的服务器，这里有我的世界服务器IP地址大全。">
-		<meta name="keywords" content="我的世界服务器, 我的世界服务器列表">
-		<link href="style.css" rel="stylesheet" type="text/css">
-		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-		
-	</head>
-	<body>
-		<div class="container">
-			<h1><a href="/">我的世界服务器列表</a></h1>
-			<div class="x">
-				我的世界服务器列表，查找自己喜欢的服务器，这里有我的世界服务器IP地址大全，
-				<a href="https://list.mczfw.cn">我的世界服务器列表驱动引擎</a>。
-			</div>
-			<form id="myForm">
-				<input type="text" name="ip" placeholder="ip地址">
-				<button type="submit">查询</button>
-			</form>			
-			<div id="data">加载中.....</div>
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?56cd7ad35698ff4d95797ec00c9cb5b5";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>			
-			<script src="main.js"></script>
-			
-		</div>	
-	</body>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+  <!-- 基本 SEO 信息（保持你原来的，未做任何改动） -->
+  <title>我的世界服务器列表 - Minecraft Server list</title>
+  <meta name="description" content="我的世界服务器列表，查找自己喜欢的服务器，这里有我的世界服务器IP地址大全。">
+  <meta name="keywords" content="我的世界服务器, 我的世界服务器列表">
+
+  <!-- 增强 SEO：移动端友好、主题色等（可选但推荐） -->
+  <meta name="theme-color" content="#5cb85c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- 网站图标 -->
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+
+  <!-- 内联 CSS 开始 -->
+  <style>
+    /* 全局重置与基础字体 */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: PingFang SC, HarmonyOS_Regular, Helvetica Neue, Microsoft YaHei, sans-serif !important;
+      color: #666;
+      margin: 0;
+      padding: 0;
+      background-color: #fafafa;
+      line-height: 1.6;
+    }
+
+    a:link,
+    a:visited {
+      text-decoration: none;
+      color: #666;
+    }
+
+    a:hover {
+      color: #5cb85c;
+    }
+
+    /* 页面容器 */
+    .container {
+      text-align: center;
+      margin: 0 auto;
+      padding: 20px;
+      max-width: 1000px;
+      width: 90%;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    h1 a:hover {
+      color: #5cb85c;
+    }
+
+    .x {
+      margin-bottom: 20px;
+      color: #888;
+      font-size: 0.95rem;
+    }
+
+    .x a {
+      color: #5cb85c;
+      font-weight: bold;
+    }
+
+    /* 搜索表单 */
+    #myForm {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    #myForm input {
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      min-width: 250px;
+      max-width: 100%;
+    }
+
+    #myForm button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: 0;
+      border-radius: 4px;
+      color: #fff;
+      background-color: #5cb85c;
+      border-color: #4cae4c;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    #myForm button:hover {
+      background-color: #4cae4c;
+    }
+
+    /* 数据展示区域 */
+    #data {
+      margin-top: 30px;
+      border: 2px solid rgba(96, 184, 115, .23);
+      border-radius: 4px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      background-color: rgba(96, 184, 115, .23);
+      border-collapse: collapse;
+    }
+
+    thead {
+      background-color: #d3e9d8;
+    }
+
+    th {
+      padding: 12px;
+      text-align: left;
+      font-weight: bold;
+      background-color: #d3e9d8;
+      color: #333;
+      border-bottom: 2px solid #c3d9cd;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px dotted rgba(96, 184, 115, .23);
+      vertical-align: top;
+    }
+
+    tr:nth-of-type(odd) {
+      background: rgba(255, 255, 255, 0.74);
+    }
+
+    tr:hover {
+      background-color: #d3e9d8;
+    }
+
+    tr td img {
+      max-width: 60px;
+      height: auto;
+      display: block;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+        width: 95%;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .x {
+        font-size: 0.9rem;
+      }
+
+      #myForm {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #myForm input {
+        min-width: 100%;
+        margin-bottom: 10px;
+      }
+
+      #myForm button {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      table {
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 8px 6px;
+      }
+
+      th {
+        font-size: 0.85rem;
+        padding: 10px 6px;
+      }
+
+      tr td img {
+        max-width: 40px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.3rem;
+      }
+
+      table {
+        font-size: 0.8rem;
+      }
+
+      th,
+      td {
+        padding: 6px 4px;
+      }
+
+      tr td img {
+        max-width: 35px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1><a href="/">我的世界服务器列表</a></h1>
+    </header>
+
+    <main>
+      <section>
+        <p class="x">
+          我的世界服务器列表，查找自己喜欢的服务器，这里有我的世界服务器IP地址大全，
+          <a href="https://list.mczfw.cn">我的世界服务器列表驱动引擎</a>。
+        </p>
+
+        <!-- 搜索表单 -->
+        <form id="myForm">
+          <input type="text" name="ip" placeholder="请输入服务器IP地址" required>
+          <button type="submit">查询</button>
+        </form>
+
+        <!-- 数据显示区域 -->
+        <div id="data">🔄 正在加载服务器列表...</div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // === 全局变量 ===
+    const dataDiv = document.getElementById('data');
+
+    // === 工具函数：显示加载或错误信息 ===
+    function showLoading() {
+      dataDiv.innerHTML = '🔄 正在加载服务器列表...';
+    }
+
+    function showError(message = '❌ 加载失败，请稍后重试') {
+      dataDiv.innerHTML = `<p style="padding: 20px; color: red;">${message}</p>`;
+    }
+
+    function showTable(headers, rows) {
+      let html = `<table><thead><tr>`;
+      headers.forEach(h => html += `<th>${h}</th>`);
+      html += `</tr></thead><tbody>`;
+
+      rows.forEach(row => {
+        html += `<tr>`;
+        row.forEach((cell, i) => {
+          if (i === 0 && cell) { // 假设第0列是图片
+            html += `<td><img width="60" src="${cell}" onerror="this.style.display='none'"></td>`;
+          } else {
+            html += `<td>${cell || 'N/A'}</td>`;
+          }
+        });
+        html += `</tr>`;
+      });
+
+      html += `</tbody></table>`;
+      dataDiv.innerHTML = html;
+    }
+
+    // === 功能1：加载默认服务器列表 ===
+    async function fetchDefaultServerList() {
+      showLoading();
+      try {
+        const response = await fetch('https://list.mczfw.cn/api');
+        if (!response.ok) throw new Error('网络响应异常');
+        const data = await response.json();
+        if (!Array.isArray(data)) throw new Error('数据格式错误');
+
+        // 假定返回的数据结构是：{ logo, ip, motd }，根据实际情况调整
+        const headers = ['图标', '服务器IP地址', 'MOTD'];
+        const rows = data.map(item => [
+          item.logo || '',
+          item.ip || 'N/A',
+          item.motd || 'N/A'
+        ]);
+        showTable(headers, rows);
+
+      } catch (error) {
+        console.error('获取默认列表失败:', error);
+        showError('❌ 获取服务器列表失败，请检查网络或稍后重试');
+      }
+    }
+
+    // === 功能2：根据用户输入的 IP 查询单个服务器 ===
+    async function fetchServerByIP(ip) {
+      if (!ip || ip.trim() === '') {
+        showError('⚠️ 请输入有效的服务器IP地址');
+        return;
+      }
+
+      const encodedIP = encodeURIComponent(ip.trim());
+      const apiUrl = `https://list.mczfw.cn/api/${encodedIP}`;
+
+      showLoading();
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error(`服务器响应错误: ${response.status}`);
+
+        const data = await response.json();
+        if (!data) throw new Error('返回数据为空');
+
+        // 假定返回的数据结构包含：logo, p(在线), mp(最大), mod, motd
+        // 注意：你原来的代码中有 data.p / data.mp，这里做了兼容
+        const headers = ['图标', '在线人数', '最大人数', '模组', 'MOTD'];
+        const rows = [
+          [
+            data.logo || '',
+            `${data.p || 'N/A'} / ${data.mp || 'N/A'}`,
+            data.mod || 'N/A',
+            data.motd || 'N/A'
+          ]
+        ];
+
+        showTable(headers, rows);
+
+      } catch (error) {
+        console.error('查询IP失败:', error);
+        showError('❌ 查询该IP服务器失败，请确认IP是否正确或稍后重试');
+      }
+    }
+
+    // === 事件监听：页面加载完成后获取默认列表 ===
+    document.addEventListener('DOMContentLoaded', function () {
+      // 1. 加载默认服务器列表
+      fetchDefaultServerList();
+
+      // 2. 监听表单提交（查询单个IP）
+      const form = document.getElementById('myForm');
+      if (form) {
+        form.addEventListener('submit', function (event) {
+          event.preventDefault(); // 阻止默认提交
+
+          const ipInput = document.querySelector('input[name="ip"]');
+          const ip = ipInput ? ipInput.value : '';
+          fetchServerByIP(ip);
+        });
+      }
+    });
+
+    // === 百度统计 ===
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?56cd7ad35698ff4d95797ec00c9cb5b5";
+      var s = document.getElementsByTagName("script")[0];
+      if (s) s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+</body>
 
 </html>
-
-
-
