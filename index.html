@@ -174,11 +174,13 @@
       user-select: none;
       display: inline-block;
       margin: 0 2px;
+      border: 1px solid transparent;
     }
 
     .ip-address-default:hover {
       background: rgba(92, 184, 92, 0.1);
       color: #495057;
+      border: 1px solid #5cb85c;
     }
 
     .ip-address-default:active {
@@ -434,11 +436,12 @@
           } else {
             let processedCell = cell;
             
-            if (isDefaultList && i === 1) { // 只针对默认列表的第2列(索引1)，也就是IP列
-              // 检查单元格内容是否是IP地址格式
-              if (typeof cell === 'string' && /(\b(?:\d{1,3}\.){3}\d{1,3}\b)/.test(cell)) {
-                // 只替换IP地址为可点击的span
-                processedCell = cell.replace(/(\b(?:\d{1,3}\.){3}\d{1,3}\b)/g, '<span class="ip-address-default" onclick="copyToClipboard(\'$1\')" title="点击复制IP地址">$1</span>');
+            if (isDefaultList && i === 1) { // 只针对默认列表的第2列(索引1)，也就是IP/域名列
+              // 检查单元格内容是否包含IP或域名
+              if (typeof cell === 'string') {
+                // 创建一个临时div来解析HTML内容
+                processedCell = cell.replace(/(\b(?:\d{1,3}\.){3}\d{1,3}\b|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, 
+                  '<span class="ip-address-default" onclick="copyToClipboard(\'$1\')" title="点击复制IP地址或域名">$1</span>');
               }
             }
             
@@ -454,11 +457,29 @@
 
     // === 复制到剪贴板功能 ===
     function copyToClipboard(text) {
+      // 方法1: 使用现代 Clipboard API
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function() {
+          showCopyTooltip();
+        }).catch(function(err) {
+          console.error('Clipboard API 失败:', err);
+          // 如果 Clipboard API 失败，回退到方法2
+          fallbackCopyTextToClipboard(text);
+        });
+      } else {
+        // 方法2: 回退方案
+        fallbackCopyTextToClipboard(text);
+      }
+    }
+
+    // 备用复制方法
+    function fallbackCopyTextToClipboard(text) {
       const textarea = document.createElement('textarea');
       textarea.value = text;
       textarea.style.position = 'fixed';
       textarea.style.left = '-999999px';
       textarea.style.top = '-999999px';
+      textarea.style.opacity = '0';
       document.body.appendChild(textarea);
       textarea.focus();
       textarea.select();
@@ -468,15 +489,7 @@
         if (successful) {
           showCopyTooltip();
         } else {
-          if (navigator.clipboard) {
-            navigator.clipboard.writeText(text).then(function() {
-              showCopyTooltip();
-            }).catch(function() {
-              showCopyError();
-            });
-          } else {
-            showCopyError();
-          }
+          showCopyError();
         }
       } catch (err) {
         showCopyError();
@@ -503,7 +516,7 @@
       setTimeout(function() {
         copyTooltip.classList.remove('show');
         copyTooltip.style.background = '#28a745';
-        copyTooltip.textContent = '✅ IP已复制到剪贴板';
+        copyTooltip.textContent = '✅ 点击复制IP地址';
       }, 2000);
     }
 
@@ -519,10 +532,10 @@
         const headers = ['图标', '服务器IP地址', 'MOTD'];
         const rows = data.map(item => [
           item.logo || '',
-          item.ip || 'N/A', // 这是要复制的IP地址
+          item.ip || 'N/A',
           item.motd || 'N/A'
         ]);
-        showTable(headers, rows, true); // true表示这是默认列表，只有这里的IP才添加复制功能
+        showTable(headers, rows, true); // true表示这是默认列表
 
       } catch (error) {
         console.error('获取默认列表失败:', error);
@@ -557,7 +570,7 @@
           ]
         ];
 
-        showTable(headers, rows, false); // false表示这不是默认列表，不添加IP复制功能
+        showTable(headers, rows, false); // false表示这不是默认列表
 
       } catch (error) {
         console.error('查询IP失败:', error);
