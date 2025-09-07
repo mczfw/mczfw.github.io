@@ -336,12 +336,11 @@
 
         // 假定返回的数据结构包含：logo, p(在线), mp(最大), mod, motd
         // 注意：你原来的代码中有 data.p / data.mp，这里做了兼容
-        const headers = ['图标', '在线人数', '最大人数', '模组', 'MOTD'];
+        const headers = ['图标', '在线人数', 'MOTD'];
         const rows = [
           [
             data.logo || '',
             `${data.p || 'N/A'} / ${data.mp || 'N/A'}`,
-            data.mod || 'N/A',
             data.motd || 'N/A'
           ]
         ];
@@ -384,4 +383,5 @@
 </body>
 
 </html>
+
 
