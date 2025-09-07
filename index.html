@@ -124,7 +124,7 @@
 
     table {
       width: 100%;
-      background-color: #fff; /* 修改：统一白色背景，去掉绿色 */
+      background-color: #fff;
       border-collapse: collapse;
     }
 
@@ -145,11 +145,11 @@
       padding: 12px;
       border-bottom: 1px dotted rgba(96, 184, 115, .23);
       vertical-align: top;
-      background-color: #fff; /* 修改：统一白色背景 */
+      background-color: #fff;
     }
 
     tr:nth-of-type(odd) {
-      background: #fff; /* 修改：奇数行也使用白色背景，去掉半透明白色 */
+      background: #fff;
     }
 
     tr:hover {
@@ -162,9 +162,9 @@
       display: block;
     }
 
-    /* IP地址样式 - 新增 */
+    /* IP地址样式 */
     .ip-address {
-      color: #495057; /* 深灰色，自然不突兀 */
+      color: #495057;
       cursor: pointer;
       padding: 2px 6px;
       border-radius: 4px;
@@ -177,15 +177,15 @@
     }
 
     .ip-address:hover {
-      background: rgba(92, 184, 92, 0.1); /* 悬停时浅绿色背景 */
-      color: #495057; /* 保持文字颜色不变 */
+      background: rgba(92, 184, 92, 0.1);
+      color: #495057;
     }
 
     .ip-address:active {
       transform: translateY(0);
     }
 
-    /* 复制成功提示 - 新增 */
+    /* 复制成功提示 */
     .copy-tooltip {
       position: fixed;
       background: #28a745;
@@ -203,6 +203,44 @@
 
     .copy-tooltip.show {
       opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 返回顶部按钮 */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(45deg, #5cb85c, #4cae4c);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(92, 184, 92, 0.3);
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 1000;
+    }
+
+    .back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .back-to-top:hover {
+      background: linear-gradient(45deg, #4cae4c, #449d44);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(92, 184, 92, 0.4);
+    }
+
+    .back-to-top:active {
       transform: translateY(0);
     }
 
@@ -258,6 +296,15 @@
         font-size: 11px;
         padding: 1px 4px;
       }
+
+      /* 移动端返回顶部按钮调整 */
+      .back-to-top {
+        width: 45px;
+        height: 45px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 18px;
+      }
     }
 
     @media (max-width: 480px) {
@@ -283,6 +330,42 @@
         font-size: 10px;
         padding: 1px 3px;
       }
+
+      /* 小屏幕返回顶部按钮调整 */
+      .back-to-top {
+        width: 40px;
+        height: 40px;
+        bottom: 15px;
+        right: 15px;
+        font-size: 16px;
+      }
+    }
+
+    /* 页底下载链接样式 - 新增 */
+    .footer-download {
+      margin-top: 40px;
+      padding: 20px;
+      text-align: center;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .footer-download a {
+      color: #5cb85c;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      padding: 10px 20px;
+      border: 1px solid #5cb85c;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .footer-download a:hover {
+      background-color: #5cb85c;
+      color: #fff;
     }
   </style>
 </head>
@@ -312,13 +395,22 @@
     </main>
   </div>
 
-  <!-- 复制提示工具 - 新增 -->
+  <!-- 复制提示工具 -->
   <div id="copyTooltip" class="copy-tooltip">✅ IP已复制到剪贴板</div>
+
+  <!-- 返回顶部按钮 -->
+  <button id="backToTop" class="back-to-top" title="返回顶部">↑</button>
+
+  <!-- 页底下载链接 - 新增 -->
+  <div class="footer-download">
+    <a href="https://list.mczfw.cn/download?download=静态我的世界服务器查询网站源码">点击下载我的世界查询网站源码</a>
+  </div>
 
   <script>
     // === 全局变量 ===
     const dataDiv = document.getElementById('data');
-    const copyTooltip = document.getElementById('copyTooltip'); // 新增
+    const copyTooltip = document.getElementById('copyTooltip');
+    const backToTopButton = document.getElementById('backToTop');
 
     // === 工具函数：显示加载或错误信息 ===
     function showLoading() {
@@ -339,9 +431,7 @@
         row.forEach((cell, i) => {
           if (i === 0 && cell) { // 假设第0列是图片
             html += `<td><img width="60" src="${cell}" onerror="this.style.display='none'"></td>`;
-          } else if (i === 1 && cell) { // 假设第1列是IP地址（根据实际情况调整索引）
-            // 将IP地址包裹在可点击的span中，并添加复制功能
-            // 这里假设IP是纯文本，您可能需要根据实际数据结构调整
+          } else if (i === 1 && cell) { // 假设第1列是IP地址
             const ipMatch = cell.match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
             if (ipMatch && ipMatch[1]) {
               const ip = ipMatch[1];
@@ -360,9 +450,8 @@
       dataDiv.innerHTML = html;
     }
 
-    // === 复制到剪贴板功能 - 新增 ===
+    // === 复制到剪贴板功能 ===
     function copyToClipboard(text) {
-      // 创建临时文本区域
       const textarea = document.createElement('textarea');
       textarea.value = text;
       textarea.style.position = 'fixed';
@@ -373,12 +462,10 @@
       textarea.select();
       
       try {
-        // 执行复制命令
         const successful = document.execCommand('copy');
         if (successful) {
           showCopyTooltip();
         } else {
-          // 如果传统方法失败，尝试现代API
           if (navigator.clipboard) {
             navigator.clipboard.writeText(text).then(function() {
               showCopyTooltip();
@@ -390,25 +477,22 @@
           }
         }
       } catch (err) {
-        // 如果都失败了，显示错误提示
         showCopyError();
       }
       
-      // 清理临时元素
       document.body.removeChild(textarea);
     }
 
-    // 显示复制成功提示 - 新增
+    // 显示复制成功提示
     function showCopyTooltip() {
       copyTooltip.classList.add('show');
       
-      // 2秒后隐藏提示
       setTimeout(function() {
         copyTooltip.classList.remove('show');
       }, 2000);
     }
 
-    // 显示复制失败提示（可选） - 新增
+    // 显示复制失败提示
     function showCopyError() {
       copyTooltip.textContent = '❌ 复制失败，请手动复制';
       copyTooltip.style.background = '#dc3545';
@@ -430,7 +514,6 @@
         const data = await response.json();
         if (!Array.isArray(data)) throw new Error('数据格式错误');
 
-        // 假定返回的数据结构是：{ logo, ip, motd }，根据实际情况调整
         const headers = ['图标', '服务器IP地址', 'MOTD'];
         const rows = data.map(item => [
           item.logo || '',
@@ -463,8 +546,6 @@
         const data = await response.json();
         if (!data) throw new Error('返回数据为空');
 
-        // 假定返回的数据结构包含：logo, p(在线), mp(最大), mod, motd
-        // 注意：你原来的代码中有 data.p / data.mp，这里做了兼容
         const headers = ['图标', '在线人数', 'MOTD'];
         const rows = [
           [
@@ -482,7 +563,23 @@
       }
     }
 
-    // === 事件监听：页面加载完成后获取默认列表 ===
+    // === 返回顶部功能 ===
+    function toggleBackToTop() {
+      if (window.pageYOffset > 300) {
+        backToTopButton.classList.add('show');
+      } else {
+        backToTopButton.classList.remove('show');
+      }
+    }
+
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    // === 事件监听 ===
     document.addEventListener('DOMContentLoaded', function () {
       // 1. 加载默认服务器列表
       fetchDefaultServerList();
@@ -491,13 +588,20 @@
       const form = document.getElementById('myForm');
       if (form) {
         form.addEventListener('submit', function (event) {
-          event.preventDefault(); // 阻止默认提交
+          event.preventDefault();
 
           const ipInput = document.querySelector('input[name="ip"]');
           const ip = ipInput ? ipInput.value : '';
           fetchServerByIP(ip);
         });
       }
+
+      // 3. 返回顶部功能
+      window.addEventListener('scroll', toggleBackToTop);
+      backToTopButton.addEventListener('click', scrollToTop);
+
+      // 初始检查
+      toggleBackToTop();
     });
 
     // === 百度统计 ===
