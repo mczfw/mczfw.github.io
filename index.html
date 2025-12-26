@@ -373,7 +373,7 @@
       <section>
         <p class="x">
           我的世界服务器列表，查找自己喜欢的服务器，这里有我的世界服务器IP地址大全，
-          <a href="https://list.mczfw.cn">我的世界服务器列表驱动引擎</a>。
+          <a href="https://list.mczfw.com">我的世界服务器列表驱动引擎</a>。
         </p>
 
         <form id="myForm">
@@ -415,7 +415,7 @@
 
   <!-- 页脚 -->
   <div class="footer-download">
-    <a href="https://list.mczfw.cn/download?download=静态我的世界服务器查询网站源码">点击下载我的世界查询网站源码</a>
+    <a href="https://list.mczfw.com/download?download=静态我的世界服务器查询网站源码">点击下载我的世界查询网站源码</a>
   </div>
 
   <script>
@@ -555,7 +555,7 @@
     async function loadDefaultServers() {
       showLoading();
       try {
-        const res = await fetch('https://list.mczfw.cn/api');
+        const res = await fetch('https://list.mczfw.com/api');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (!Array.isArray(data)) throw new Error('返回数据不是数组');
@@ -584,7 +584,7 @@
       showLoading();
       try {
         const encoded = encodeURIComponent(ip.trim());
-        const res = await fetch(`https://list.mczfw.cn/api/${encoded}`);
+        const res = await fetch(`https://list.mczfw.com/api/${encoded}`);
         if (!res.ok) throw new Error(`查询失败: ${res.status}`);
 
         const data = await res.json();
@@ -658,3 +658,4 @@
 </body>
 
 </html>
+
