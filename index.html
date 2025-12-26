@@ -12,7 +12,6 @@
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 
   <style>
-    /* === 基础样式（同上，略去重复注释）=== */
     * {
       box-sizing: border-box;
     }
@@ -99,7 +98,6 @@
       overflow: hidden;
     }
 
-    /* === 桌面端表格（>768px）=== */
     @media (min-width: 769px) {
       .table-container {
         display: block;
@@ -153,7 +151,6 @@
       }
     }
 
-    /* === 手机端卡片（≤768px）=== */
     @media (max-width: 768px) {
       .table-container {
         display: none;
@@ -280,7 +277,6 @@
       }
     }
 
-    /* === 复制提示 === */
     #copyTooltip {
       position: fixed;
       background: #28a745;
@@ -304,7 +300,6 @@
       background: #dc3545;
     }
 
-    /* === 返回顶部（可选）=== */
     .back-to-top {
       position: fixed;
       bottom: 30px;
@@ -336,7 +331,6 @@
       background: #4cae4c;
     }
 
-    /* === 页脚 === */
     .footer-download {
       margin-top: 40px;
       padding: 20px;
@@ -407,22 +401,15 @@
     </main>
   </div>
 
-  <!-- 复制提示 -->
   <div id="copyTooltip" class="copy-tooltip">✅ 已复制</div>
 
-  <!-- 返回顶部 -->
   <button id="backToTop" class="back-to-top" title="返回顶部">↑</button>
 
-  <!-- 页脚 -->
   <div class="footer-download">
     <a href="https://list.mczfw.com/download?download=静态我的世界服务器查询网站源码">点击下载我的世界查询网站源码</a>
   </div>
 
   <script>
-    // ======================
-    // 1. 复制功能（全局函数，修复版）
-    // ======================
-
     function copyToClipboard(text, element) {
       if (element) {
         element.style.transform = 'scale(0.95)';
@@ -467,10 +454,6 @@
       tooltip.style.transform = 'translate(-50%, -50%)';
       setTimeout(() => { tooltip.className = 'copy-tooltip'; }, 2000);
     }
-
-    // ======================
-    // 2. 渲染函数
-    // ======================
 
     const tableBody = document.getElementById('tableBody');
     const cardContainer = document.getElementById('cardContainer');
@@ -548,10 +531,6 @@
       cardContainer.innerHTML = html;
     }
 
-    // ======================
-    // 3. 加载默认服务器列表（真实 API）
-    // ======================
-
     async function loadDefaultServers() {
       showLoading();
       try {
@@ -570,10 +549,6 @@
         showError('❌ 获取服务器列表失败，请检查网络');
       }
     }
-
-    // ======================
-    // 4. 查询单个 IP（真实 API）
-    // ======================
 
     async function queryServerIP(ip) {
       if (!ip?.trim()) {
@@ -616,14 +591,8 @@
       }
     }
 
-    // ======================
-    // 5. 页面初始化
-    // ======================
-
     document.addEventListener('DOMContentLoaded', () => {
       loadDefaultServers();
-
-      // 表单提交：查询 IP
       document.getElementById('myForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const ipInput = document.querySelector('input[name="ip"]');
@@ -631,7 +600,6 @@
         queryServerIP(ip);
       });
 
-      // 返回顶部
       const backToTopBtn = document.getElementById('backToTop');
       window.addEventListener('scroll', () => {
         if (window.pageYOffset > 300) {
@@ -646,7 +614,6 @@
       });
     });
 
-    // 百度统计
     var _hmt = _hmt || [];
     (function () {
       var hm = document.createElement("script");
@@ -656,6 +623,6 @@
     })();
   </script>
 </body>
-
 </html>
+
 
