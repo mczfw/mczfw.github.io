@@ -1,7 +1,7 @@
 {
-  "versionName": "2.2.20",
-  "versionCode": 43,
-  "downloadUrl": "https://mc-list.cn/minecraft-servers-2.2.20.apk",
+  "versionName": "1.5.0",
+  "versionCode": 15,
+  "downloadUrl": "https://mczfw.github.io/tgxx/starky-1.5.0-release.apk",
   "force": false,
-  "message": "修复部分设备启动崩溃\n\n建议尽快升级以获得更好体验。"
+  "message": "首个正式版：新增录屏、星座区域、流星雨日历、纯净星空等大量功能，修复月相显示与多项稳定性问题。"
 }
