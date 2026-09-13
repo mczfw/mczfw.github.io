@@ -1,7 +1,7 @@
 {
   "versionName": "1.5.1",
-  "versionCode": 15,
-  "downloadUrl": "https://mczfw.github.io/tgxx/starky-1.5.0-release.apk",
+  "versionCode": 16,
+  "downloadUrl": "https://dl.minecraftservers.cn/downloads/starky.apk",
   "force": false,
   "message": "首个正式版：新增录屏、星座区域、流星雨日历、纯净星空等大量功能，修复月相显示与多项稳定性问题。"
 }
