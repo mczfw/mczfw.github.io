@@ -1,7 +1,7 @@
 {
-  "versionName": "1.5.6",
-  "versionCode": 27,
-  "downloadUrl": "https://github.com/mczfw/starky/releases/download/1.5.6/starky-1.5.6.apk",
+  "versionName": "1.5.7",
+  "versionCode": 28,
+  "downloadUrl": "https://github.com/mczfw/starky/releases/download/1.5.7/starky-1.5.7.apk",
   "force": false,
   "message": "增修复多项稳定性问题。"
 }
